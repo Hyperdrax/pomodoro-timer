@@ -1,17 +1,17 @@
-export class SoundPlayer {
-  constructor() {
-    this.audioContext = null
-    this.customAudio = null
-    this.activeOscillators = []
-  }
+export type SoundType = 'bell' | 'chime' | 'digital' | 'soft' | 'custom'
 
-  _ensureAudioContext() {
+export class SoundPlayer {
+  private audioContext: AudioContext | null = null
+  private customAudio: HTMLAudioElement | null = null
+  private activeOscillators: OscillatorNode[] = []
+
+  private _ensureAudioContext(): void {
     if (!this.audioContext) {
-      this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
+      this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
     }
   }
 
-  stop() {
+  stop(): void {
     // Stop custom audio
     if (this.customAudio) {
       this.customAudio.pause()
@@ -29,7 +29,7 @@ export class SoundPlayer {
     this.activeOscillators = []
   }
 
-  play(soundType, volume, customSoundUrl) {
+  play(soundType: SoundType, volume: number, customSoundUrl?: string): void {
     if (volume === 0) return // Muted
     
     // Ensure AudioContext is created (requires user gesture)
@@ -47,6 +47,7 @@ export class SoundPlayer {
     }
 
     // Web Audio API sounds
+    if (!this.audioContext) return
     const now = this.audioContext.currentTime
     
     if (soundType === 'bell') {
@@ -60,14 +61,16 @@ export class SoundPlayer {
     }
   }
 
-  _playBell(now, volume) {
+  private _playBell(now: number, volume: number): void {
+    if (!this.audioContext) return
+    
     const frequencies = [523.25, 659.25, 783.99] // C, E, G
     frequencies.forEach((freq, index) => {
-      const oscillator = this.audioContext.createOscillator()
-      const gainNode = this.audioContext.createGain()
+      const oscillator = this.audioContext!.createOscillator()
+      const gainNode = this.audioContext!.createGain()
       
       oscillator.connect(gainNode)
-      gainNode.connect(this.audioContext.destination)
+      gainNode.connect(this.audioContext!.destination)
       
       oscillator.frequency.value = freq
       oscillator.type = 'sine'
@@ -83,14 +86,16 @@ export class SoundPlayer {
     })
   }
 
-  _playChime(now, volume) {
+  private _playChime(now: number, volume: number): void {
+    if (!this.audioContext) return
+    
     const frequencies = [440, 554.37, 659.25, 880]
     frequencies.forEach((freq, index) => {
-      const oscillator = this.audioContext.createOscillator()
-      const gainNode = this.audioContext.createGain()
+      const oscillator = this.audioContext!.createOscillator()
+      const gainNode = this.audioContext!.createGain()
       
       oscillator.connect(gainNode)
-      gainNode.connect(this.audioContext.destination)
+      gainNode.connect(this.audioContext!.destination)
       
       oscillator.frequency.value = freq
       oscillator.type = 'triangle'
@@ -105,7 +110,9 @@ export class SoundPlayer {
     })
   }
 
-  _playDigital(now, volume) {
+  private _playDigital(now: number, volume: number): void {
+    if (!this.audioContext) return
+    
     const oscillator = this.audioContext.createOscillator()
     const gainNode = this.audioContext.createGain()
     
@@ -123,7 +130,9 @@ export class SoundPlayer {
     this.activeOscillators.push(oscillator)
   }
 
-  _playSoft(now, volume) {
+  private _playSoft(now: number, volume: number): void {
+    if (!this.audioContext) return
+    
     const oscillator = this.audioContext.createOscillator()
     const gainNode = this.audioContext.createGain()
     const filter = this.audioContext.createBiquadFilter()

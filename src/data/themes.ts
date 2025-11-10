@@ -1,4 +1,24 @@
-export const themes = {
+export interface ThemePreview {
+  bg: string
+  text: string
+  accent: string
+  accentText: string
+}
+
+export interface Theme {
+  bg: string
+  text: string
+  accent: string
+  secondary: string
+  border: string
+  preview: ThemePreview
+}
+
+export interface Themes {
+  [key: string]: Theme
+}
+
+export const themes: Themes = {
   minimal: {
     bg: 'bg-stone-100',
     text: 'text-gray-900',

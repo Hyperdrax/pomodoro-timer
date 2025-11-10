@@ -1,6 +1,45 @@
-import { themes as themeData } from '../data/themes'
+import { Theme } from '../data/themes'
 import ThemeGrid from './ThemeGrid'
 import CustomThemeCreator from './CustomThemeCreator'
+import { CustomTheme } from '../hooks/useThemeSettings'
+import { TimerFont, HideMode } from '../hooks/useTimerSettings'
+import { SoundType } from '../utils/soundPlayer'
+import { ChangeEvent } from 'react'
+
+type TabType = 'themes' | 'time' | 'sound' | 'timer'
+
+interface SettingsProps {
+  show: boolean
+  tab: TabType
+  onTabChange: (tab: TabType) => void
+  theme: Theme | 'custom'
+  customTheme: CustomTheme
+  onThemeChange: (themeName: string) => void
+  onCustomThemeChange: (theme: CustomTheme) => void
+  workTime: number
+  breakTime: number
+  onTimeChange: (workTime: number, breakTime: number) => void
+  showCustomTheme: boolean
+  onToggleCustomTheme: () => void
+  volume: number
+  onVolumeChange: (volume: number) => void
+  soundType: SoundType
+  onSoundTypeChange: (type: SoundType) => void
+  customSoundUrl: string
+  onCustomSoundUrlChange: (url: string) => void
+  onTestSound: () => void
+  onStopSound: () => void
+  hasCustomTheme: boolean
+  onHasCustomThemeChange: (has: boolean) => void
+  timerSize: number
+  onTimerSizeChange: (size: number) => void
+  timerFont: TimerFont
+  onTimerFontChange: (font: TimerFont) => void
+  timerSpacing: number
+  onTimerSpacingChange: (spacing: number) => void
+  hideMode: HideMode
+  onHideModeChange: (mode: HideMode) => void
+}
 
 export default function Settings({ 
   show, 
@@ -33,8 +72,17 @@ export default function Settings({
   onTimerSpacingChange,
   hideMode,
   onHideModeChange
-}) {
+}: SettingsProps) {
   if (!show) return null
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const url = URL.createObjectURL(file)
+      onCustomSoundUrlChange(url)
+      onSoundTypeChange('custom')
+    }
+  }
 
   return (
     <div 
@@ -116,7 +164,7 @@ export default function Settings({
           {!showCustomTheme ? (
             <>
               <ThemeGrid 
-                currentTheme={theme}
+                currentTheme={typeof theme === 'string' ? theme : 'dark'}
                 onThemeChange={onThemeChange}
                 customTheme={customTheme}
                 hasCustomTheme={hasCustomTheme}
@@ -144,7 +192,7 @@ export default function Settings({
                 onThemeChange('custom')
                 onToggleCustomTheme()
               }}
-              theme={theme}
+              theme={customTheme}
             />
           )}
         </div>
@@ -224,7 +272,7 @@ export default function Settings({
               notification sound
             </h3>
             <div className="grid grid-cols-2 gap-2 mb-4">
-              {['bell', 'chime', 'digital', 'soft'].map((sound) => (
+              {(['bell', 'chime', 'digital', 'soft'] as SoundType[]).map((sound) => (
                 <button
                   key={sound}
                   onClick={() => onSoundTypeChange(sound)}
@@ -300,14 +348,7 @@ export default function Settings({
                     type="file"
                     accept="audio/*"
                     className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0]
-                      if (file) {
-                        const url = URL.createObjectURL(file)
-                        onCustomSoundUrlChange(url)
-                        onSoundTypeChange('custom')
-                      }
-                    }}
+                    onChange={handleFileChange}
                   />
                   📁 or upload local file
                 </label>

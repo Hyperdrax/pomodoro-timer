@@ -10,6 +10,8 @@ import { useThemeSettings } from './hooks/useThemeSettings'
 import { useSoundSettings } from './hooks/useSoundSettings'
 import { SoundPlayer } from './utils/soundPlayer'
 
+type SettingsTab = 'themes' | 'time' | 'sound' | 'timer'
+
 function App() {
   // Custom hooks for settings
   const timerSettings = useTimerSettings()
@@ -24,12 +26,12 @@ function App() {
   
   // UI state
   const [showSettings, setShowSettings] = useState(false)
-  const [settingsTab, setSettingsTab] = useState('themes')
+  const [settingsTab, setSettingsTab] = useState<SettingsTab>('themes')
   const [showCustomTheme, setShowCustomTheme] = useState(false)
   const [hideControls, setHideControls] = useState(false)
 
   // Sound player ref
-  const soundPlayerRef = useRef(null)
+  const soundPlayerRef = useRef<SoundPlayer | null>(null)
 
   const theme = themeSettings.themeName === 'custom' ? 'custom' : themes[themeSettings.themeName]
 
@@ -56,7 +58,7 @@ function App() {
   }
 
   useEffect(() => {
-    let interval = null
+    let interval: number | null = null
 
     if (isActive) {
       interval = setInterval(() => {
@@ -91,7 +93,9 @@ function App() {
       }, 1000)
     }
 
-    return () => clearInterval(interval)
+    return () => {
+      if (interval) clearInterval(interval)
+    }
   }, [isActive, minutes, seconds, isWorkMode, timerSettings.workTime, timerSettings.breakTime])
 
   const toggleTimer = () => {
@@ -115,10 +119,10 @@ function App() {
     setSeconds(0)
   }
 
-  const applySettings = (newWorkTime, newBreakTime) => {
+  const applySettings = (newWorkTime: number, newBreakTime: number) => {
     // Handle NaN or empty values by defaulting to current values
-    const validWorkTime = isNaN(newWorkTime) || newWorkTime === '' ? timerSettings.workTime : newWorkTime
-    const validBreakTime = isNaN(newBreakTime) || newBreakTime === '' ? timerSettings.breakTime : newBreakTime
+    const validWorkTime = isNaN(newWorkTime) ? timerSettings.workTime : newWorkTime
+    const validBreakTime = isNaN(newBreakTime) ? timerSettings.breakTime : newBreakTime
     
     // Clamp values between 1 and 999
     const clampedWorkTime = Math.max(1, Math.min(999, validWorkTime))
@@ -132,7 +136,7 @@ function App() {
 
   return (
     <div 
-      className={`min-h-screen ${themeSettings.themeName !== 'custom' ? theme.bg : ''} flex items-center justify-center transition-colors duration-500`}
+      className={`min-h-screen ${themeSettings.themeName !== 'custom' && theme !== 'custom' ? theme.bg : ''} flex items-center justify-center transition-colors duration-500`}
       style={themeSettings.themeName === 'custom' ? { 
         background: themeSettings.customTheme.bgImage 
           ? `url(${themeSettings.customTheme.bgImage}) center/cover, ${themeSettings.customTheme.bg}`

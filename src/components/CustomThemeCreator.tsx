@@ -1,4 +1,23 @@
-export default function CustomThemeCreator({ customTheme, onChange, onCancel, onApply, theme }) {
+import { CustomTheme } from '../hooks/useThemeSettings'
+import { ChangeEvent } from 'react'
+
+interface CustomThemeCreatorProps {
+  customTheme: CustomTheme
+  onChange: (theme: CustomTheme) => void
+  onCancel: () => void
+  onApply: () => void
+  theme: CustomTheme
+}
+
+export default function CustomThemeCreator({ customTheme, onChange, onCancel, onApply, theme }: CustomThemeCreatorProps) {
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const url = URL.createObjectURL(file)
+      onChange({ ...customTheme, bgImage: url })
+    }
+  }
+
   return (
     <div>
       {/* Live Preview */}
@@ -66,13 +85,7 @@ export default function CustomThemeCreator({ customTheme, onChange, onCancel, on
           <input 
             type="file"
             accept="image/*"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) {
-                const url = URL.createObjectURL(file);
-                onChange({ ...customTheme, bgImage: url });
-              }
-            }}
+            onChange={handleFileChange}
             className="hidden"
           />
         </label>
@@ -132,12 +145,12 @@ export default function CustomThemeCreator({ customTheme, onChange, onCancel, on
         <button
           onClick={onCancel}
           className="flex-1 py-2 rounded-lg transition-all opacity-60 hover:opacity-100"
-          style={theme === 'custom' ? {
+          style={{
             color: customTheme.text,
             borderWidth: '2px',
             borderStyle: 'solid',
             borderColor: customTheme.accent
-          } : {}}
+          }}
         >
           cancel
         </button>

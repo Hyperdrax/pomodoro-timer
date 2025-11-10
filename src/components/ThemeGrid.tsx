@@ -1,6 +1,14 @@
 import { themes } from '../data/themes'
+import { CustomTheme } from '../hooks/useThemeSettings'
 
-export default function ThemeGrid({ currentTheme, onThemeChange, customTheme, hasCustomTheme }) {
+interface ThemeGridProps {
+  currentTheme: string
+  onThemeChange: (themeName: string) => void
+  customTheme: CustomTheme
+  hasCustomTheme: boolean
+}
+
+export default function ThemeGrid({ currentTheme, onThemeChange, customTheme, hasCustomTheme }: ThemeGridProps) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
       {Object.keys(themes).map((themeName) => {

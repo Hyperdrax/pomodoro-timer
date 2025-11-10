@@ -1,4 +1,17 @@
-export default function ModeToggle({ isWorkMode, workTime, breakTime, onSwitch, theme, customTheme, hide }) {
+import { Theme } from '../data/themes'
+import { CustomTheme } from '../hooks/useThemeSettings'
+
+interface ModeToggleProps {
+  isWorkMode: boolean
+  workTime: number
+  breakTime: number
+  onSwitch: () => void
+  theme: Theme | 'custom'
+  customTheme: CustomTheme
+  hide: boolean
+}
+
+export default function ModeToggle({ isWorkMode, workTime, breakTime, onSwitch, theme, customTheme, hide }: ModeToggleProps) {
   if (hide) return null
   
   return (

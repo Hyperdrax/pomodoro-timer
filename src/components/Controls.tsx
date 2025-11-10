@@ -1,4 +1,16 @@
-export default function Controls({ isActive, onToggle, onReset, onSettings, theme, customTheme }) {
+import { Theme } from '../data/themes'
+import { CustomTheme } from '../hooks/useThemeSettings'
+
+interface ControlsProps {
+  isActive: boolean
+  onToggle: () => void
+  onReset: () => void
+  onSettings: () => void
+  theme: Theme | 'custom'
+  customTheme: CustomTheme
+}
+
+export default function Controls({ isActive, onToggle, onReset, onSettings, theme, customTheme }: ControlsProps) {
   const buttonStyle = theme === 'custom' ? {
     backgroundColor: customTheme.bg + '80',
     color: customTheme.text,
