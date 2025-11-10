@@ -94,14 +94,13 @@ function App() {
     return () => clearInterval(interval)
   }, [isActive, minutes, seconds, isWorkMode, timerSettings.workTime, timerSettings.breakTime])
 
-  // Request notification permission on mount
-  useEffect(() => {
+  const toggleTimer = () => {
+    // Request notification permission on first user interaction
     if ('Notification' in window && Notification.permission === 'default') {
       Notification.requestPermission()
     }
-  }, [])
-
-  const toggleTimer = () => setIsActive(!isActive)
+    setIsActive(!isActive)
+  }
   
   const resetTimer = () => {
     setIsActive(false)

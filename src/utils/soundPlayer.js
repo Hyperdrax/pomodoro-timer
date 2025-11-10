@@ -1,8 +1,14 @@
 export class SoundPlayer {
   constructor() {
-    this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
+    this.audioContext = null
     this.customAudio = null
     this.activeOscillators = []
+  }
+
+  _ensureAudioContext() {
+    if (!this.audioContext) {
+      this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
+    }
   }
 
   stop() {
@@ -25,6 +31,9 @@ export class SoundPlayer {
 
   play(soundType, volume, customSoundUrl) {
     if (volume === 0) return // Muted
+    
+    // Ensure AudioContext is created (requires user gesture)
+    this._ensureAudioContext()
     
     // Stop any currently playing sound
     this.stop()
