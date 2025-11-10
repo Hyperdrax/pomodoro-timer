@@ -6,7 +6,7 @@ A modern, minimalistic Pomodoro Timer web application built with React, Vite, an
 ![Vite](https://img.shields.io/badge/Vite-5+-646CFF?logo=vite)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4+-38B2AC?logo=tailwind-css)
 
-🔗 **[Live Demo](https://YOUR-USERNAME.github.io/pomodoro-timer/)** (Update after deployment)
+🔗 **[Live Demo](https://hyperdrax.github.io/pomodoro-timer/)**
 
 ## ✨ Features
 
